@@ -469,6 +469,12 @@ include ":native:swift:sir",
         ":native:swift:swift-export-embeddable",
         ":generators:sir-tests-generator"
 
+// Kotlin on CLR
+include ":clr:clr.config",
+        ":clr:clr.ir",
+        ":clr:clr.frontend",
+        ":clr:clr.backend"
+
 void intellij(String imlPath) {
     File imlFile = new File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/plugins/kotlin/${imlPath}")
