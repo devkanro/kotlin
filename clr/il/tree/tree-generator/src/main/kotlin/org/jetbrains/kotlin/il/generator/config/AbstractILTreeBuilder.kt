@@ -56,4 +56,13 @@ abstract class AbstractILTreeBuilder : AbstractElementConfigurator<Element, Fiel
             initializer()
         }
     }
+
+    protected fun Element.generateBooleanFields(vararg names: String) {
+        names.forEach {
+            +field(
+                if (it.startsWith("is") || it.startsWith("has")) it else "is${it.replaceFirstChar(Char::uppercaseChar)}",
+                StandardTypes.boolean
+            )
+        }
+    }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.il.generator
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.il.generator.config.AbstractILTreeBuilder
 import org.jetbrains.kotlin.il.generator.model.Element
@@ -50,5 +51,8 @@ object ILTree : AbstractILTreeBuilder() {
 
     val `class`: Element by element(Element.Category.Declaration) {
         parent(declaration)
+
+        +field("visibility", type<Visibility>())
+        +field("layout", layoutAttributeType)
     }
 }

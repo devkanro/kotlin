@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.il.generator
 
 import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.type
+import org.jetbrains.kotlin.il.generator.Packages.clrDescriptors
 import org.jetbrains.kotlin.il.generator.Packages.tree
 
 object Packages {
@@ -18,7 +19,10 @@ object Packages {
     const val types = "org.jetbrains.kotlin.il.types"
     const val visitors = "org.jetbrains.kotlin.il.visitors"
     const val descriptors = "org.jetbrains.kotlin.descriptors"
+    const val clrDescriptors = "org.jetbrains.kotlin.descriptors.clr"
     const val util = "org.jetbrains.kotlin.il.util"
 }
 
 val elementBaseType = type(tree, "ILElementBase", TypeKind.Class)
+
+val layoutAttributeType = type(clrDescriptors, "LayoutAttribute", TypeKind.Class)

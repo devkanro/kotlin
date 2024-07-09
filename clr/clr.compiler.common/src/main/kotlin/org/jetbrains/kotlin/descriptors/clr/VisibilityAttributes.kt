@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.descriptors.clr
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.name.FqName
 
-object ClrVisibilities {
+object VisibilityAttributes {
     object NestedAssemblyVisibility : Visibility("nested_assembly", isPublicAPI = false) {
         override fun mustCheckInImports(): Boolean = true
 
