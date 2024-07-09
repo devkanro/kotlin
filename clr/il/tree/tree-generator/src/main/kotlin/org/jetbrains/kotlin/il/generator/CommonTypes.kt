@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.il.generator
 
+import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.type
+import org.jetbrains.kotlin.il.generator.Packages.tree
+
 object Packages {
     const val tree = "org.jetbrains.kotlin.il"
     const val exprs = "org.jetbrains.kotlin.il.expressions"
@@ -17,3 +21,4 @@ object Packages {
     const val util = "org.jetbrains.kotlin.il.util"
 }
 
+val elementBaseType = type(tree, "ILElementBase", TypeKind.Class)

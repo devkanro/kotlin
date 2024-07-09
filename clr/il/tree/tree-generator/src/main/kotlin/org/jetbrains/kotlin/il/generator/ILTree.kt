@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.il.generator.config.AbstractILTreeBuilder
 import org.jetbrains.kotlin.il.generator.model.Element
 import org.jetbrains.kotlin.il.generator.model.SimpleField
 
-object ILTree: AbstractILTreeBuilder() {
-    private fun descriptor(typeName: String, nullable: Boolean = false): SimpleField =
+object ILTree : AbstractILTreeBuilder() {
+    private fun descriptor(
+        typeName: String,
+        nullable: Boolean = false,
+    ): SimpleField =
         field(
             name = "descriptor",
             type = type(Packages.descriptors, typeName),
@@ -22,16 +25,18 @@ object ILTree: AbstractILTreeBuilder() {
 
     override val rootElement: Element by element(Element.Category.Other, name = "Element") {
 
-        fun offsetField(prefix: String) = field(prefix + "Offset", int, mutable = false) {
-            kDoc = """
-            The $prefix offset of the syntax node from which this IL node was generated,
-            in number of characters from the start of the source file. If there is no source information for this IL node,
-            the [UNDEFINED_OFFSET] constant is used. In order to get the line number and the column number from this offset,
-            [ILFileEntry.getLineNumber] and [ILFileEntry.getColumnNumber] can be used.
-            
-            @see ILFileEntry.getSourceRangeInfo
-            """.trimIndent()
-        }
+        fun offsetField(prefix: String) =
+            field(prefix + "Offset", int, mutable = false) {
+                kDoc =
+                    """
+                    The $prefix offset of the syntax node from which this IL node was generated,
+                    in number of characters from the start of the source file. If there is no source information for this IL node,
+                    the [UNDEFINED_OFFSET] constant is used. In order to get the line number and the column number from this offset,
+                    [ILFileEntry.getLineNumber] and [ILFileEntry.getColumnNumber] can be used.
+                    
+                    @see ILFileEntry.getSourceRangeInfo
+                    """.trimIndent()
+            }
 
         +offsetField("start")
         +offsetField("end")
@@ -45,6 +50,5 @@ object ILTree: AbstractILTreeBuilder() {
 
     val `class`: Element by element(Element.Category.Declaration) {
         parent(declaration)
-
     }
 }

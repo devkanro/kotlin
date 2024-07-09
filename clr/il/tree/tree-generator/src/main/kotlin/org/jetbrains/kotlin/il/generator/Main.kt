@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.il.generator
 
-import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
 import org.jetbrains.kotlin.il.generator.model.Element
-import org.jetbrains.kotlin.ir.generator.model.Element
-import org.jetbrains.kotlin.ir.generator.print.*
-import org.jetbrains.kotlin.ir.generator.print.symbol.*
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
 const val BASE_PACKAGE = "org.jetbrains.kotlin.il"
 
-// TODO: CLR
-internal const val TREE_GENERATOR_README = "clr/clr.il/tree-generator/ReadMe.md"
+internal const val TREE_GENERATOR_README = "clr/il/tree/tree-generator/ReadMe.md"
 
 typealias Model = org.jetbrains.kotlin.generators.tree.Model<Element>
 
@@ -47,18 +42,6 @@ fun main(args: Array<String>) {
                 add(printSymbolRemapper(generationPath, model, referencedSymbolRemapperType, ::ReferencedSymbolRemapperInterfacePrinter))
                 add(printSymbolRemapper(generationPath, model, symbolRemapperType, ::SymbolRemapperInterfacePrinter))
             }
-        )
-
-        generateTree(
-            symbolModel,
-            pureAbstractElement = null,
-            ::SymbolPrinter.bind(model),
-            createVisitorPrinters = emptyList(),
-            SymbolImplementationConfigurator,
-            createImplementationPrinter = ::SymbolImplementationPrinter,
-            enableBaseTransformerTypeDetection = false,
-            putElementsInSingleFile = Packages.symbols to "IrSymbol",
-            putImplementationsInSingleFile = Packages.symbolsImpl to "IrSymbolImpl",
         )
     }
 }

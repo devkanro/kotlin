@@ -22,14 +22,14 @@ object ClrToKotlinClassMap {
     private val NUMBERED_K_SUSPEND_FUNCTION_PREFIX: String =
         FunctionTypeKind.KSuspendFunction.packageFqName.toString() + "." + FunctionTypeKind.KSuspendFunction.classNamePrefix
 
-    private val FUNCTION_N_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
+    private val FUNCTION_N_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.clr.functions.FunctionN"))
     val FUNCTION_N_FQ_NAME: FqName = FUNCTION_N_CLASS_ID.asSingleFqName()
     private val K_FUNCTION_CLASS_ID: ClassId = StandardClassIds.KFunction
     private val K_CLASS_CLASS_ID: ClassId = StandardClassIds.KClass
-    private val CLASS_CLASS_ID: ClassId = classId(Class::class.java)
+    private val Type_CLASS_ID: ClassId = ClassId.topLevel(FqName("System.Type"))
 
-    private val javaToKotlin = HashMap<FqNameUnsafe, ClassId>()
-    private val kotlinToJava = HashMap<FqNameUnsafe, ClassId>()
+    private val clrToKotlin = HashMap<FqNameUnsafe, ClassId>()
+    private val kotlinToClr = HashMap<FqNameUnsafe, ClassId>()
 
     private val mutableToReadOnly = HashMap<FqNameUnsafe, FqName>()
     private val readOnlyToMutable = HashMap<FqNameUnsafe, FqName>()
@@ -80,7 +80,7 @@ object ClrToKotlinClassMap {
         for (jvmType in JvmPrimitiveType.values()) {
             add(
                 ClassId.topLevel(jvmType.wrapperFqName),
-                ClassId.topLevel(StandardNames.getPrimitiveFqName(jvmType.primitiveType))
+                ClassId.topLevel(StandardNames.getPrimitiveFqName(jvmType.primitiveType)),
             )
         }
 
@@ -115,13 +115,13 @@ object ClrToKotlinClassMap {
      * - kotlin.jvm.functions.Function3 -> kotlin.Function3
      * - kotlin.jvm.functions.FunctionN -> null // Without a type annotation like @Arity(n), it's impossible to find out arity
      */
-    fun mapJavaToKotlin(fqName: FqName): ClassId? {
-        return javaToKotlin[fqName.toUnsafe()]
+    fun mapClrToKotlin(fqName: FqName): ClassId? {
+        return clrToKotlin[fqName.toUnsafe()]
     }
 
-    fun mapJavaToKotlinIncludingClassMapping(fqName: FqName): ClassId? {
-        if (fqName == CLASS_CLASS_ID.asSingleFqName()) return K_CLASS_CLASS_ID
-        return mapJavaToKotlin(fqName)
+    fun mapClrToKotlinIncludingClassMapping(fqName: FqName): ClassId? {
+        if (fqName == Type_CLASS_ID.asSingleFqName()) return K_CLASS_CLASS_ID
+        return mapClrToKotlin(fqName)
     }
 
     /**
@@ -145,7 +145,7 @@ object ClrToKotlinClassMap {
         isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_SUSPEND_FUNCTION_PREFIX) -> FUNCTION_N_CLASS_ID
         isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_K_FUNCTION_PREFIX) -> K_FUNCTION_CLASS_ID
         isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_K_SUSPEND_FUNCTION_PREFIX) -> K_FUNCTION_CLASS_ID
-        else -> kotlinToJava[kotlinFqName]
+        else -> kotlinToClr[kotlinFqName]
     }
 
     private fun isKotlinFunctionWithBigArity(kotlinFqName: FqNameUnsafe, prefix: String): Boolean {
@@ -184,11 +184,11 @@ object ClrToKotlinClassMap {
     }
 
     private fun addJavaToKotlin(javaClassId: ClassId, kotlinClassId: ClassId) {
-        javaToKotlin[javaClassId.asSingleFqName().toUnsafe()] = kotlinClassId
+        clrToKotlin[javaClassId.asSingleFqName().toUnsafe()] = kotlinClassId
     }
 
     private fun addKotlinToJava(kotlinFqNameUnsafe: FqName, javaClassId: ClassId) {
-        kotlinToJava[kotlinFqNameUnsafe.toUnsafe()] = javaClassId
+        kotlinToClr[kotlinFqNameUnsafe.toUnsafe()] = javaClassId
     }
 
     fun isJavaPlatformClass(fqName: FqName): Boolean = mapJavaToKotlin(fqName) != null
