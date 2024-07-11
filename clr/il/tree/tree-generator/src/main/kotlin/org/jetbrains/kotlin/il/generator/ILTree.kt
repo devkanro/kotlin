@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.il.generator
 
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.il.generator.config.AbstractILTreeBuilder
 import org.jetbrains.kotlin.il.generator.model.Element
-import org.jetbrains.kotlin.il.generator.model.ListField
 import org.jetbrains.kotlin.il.generator.model.SimpleField
 
 object ILTree : AbstractILTreeBuilder() {
@@ -22,152 +20,288 @@ object ILTree : AbstractILTreeBuilder() {
             type = type(Packages.descriptors, typeName),
             mutable = false,
             nullable = nullable,
-        ) {
-        }
+        ) {}
 
     override val rootElement: Element by element(Element.Category.Other, name = "Element") {
         kDoc = "The root interface of the IL tree. Each IL node implements this interface."
     }
 
-    val assemblyElement: Element by element(Element.Category.Primitive) {
+    val id: Element by element(Element.Category.Primitive) {
+        +field<String>("value")
     }
 
-    val moduleElement: Element by element(Element.Category.Primitive) {
+    val dottedName: Element by element(Element.Category.Primitive) {
+        +listField("names", id)
     }
 
-    val classElement: Element by element(Element.Category.Primitive) {
+    val fileName: Element by element(Element.Category.Primitive) {
+        parent(dottedName)
     }
 
-    val namedElement: Element by element(Element.Category.Primitive) {
-        +field("id", type<String>())
+    val externSourceDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
+
+        +field<String>("file")
+        +field<Int>("line")
+        +field<Int>("column", nullable = true)
     }
 
-    val externSourceDeclaration: Element by element(Element.Category.Primitive) {
-        parent(assemblyElement)
-        parent(moduleElement)
-        parent(classElement)
+    val decl: Element by element(Element.Category.Primitive) {}
 
-        +field("file", type<String>())
-        +field("line", type<Int>())
-        +field("column", type<Int>(), nullable = true)
+    val file: Element by element(Element.Category.Other) {
+        +listField("decls", decl)
     }
 
-    val fileAlignment: Element by element(Element.Category.Primitive) {
-        parent(assemblyElement)
-
-        +field("alignment", type<Int>())
+    val assembly: Element by element(Element.Category.Other) {
+        +listField("decls", decl)
     }
 
-    val imageBase: Element by element(Element.Category.Primitive) {
-        parent(assemblyElement)
+    val assemblyDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
 
-        +field("value", type<Int>())
+        +field("name", dottedName)
+        +listField("decls", asmDecl)
     }
 
-    val subsystem: Element by element(Element.Category.Primitive) {
-        parent(assemblyElement)
+    val asmDecl: Element by element(Element.Category.Primitive) {}
 
-        +field("value", type<Int>())
+    val asmHashDecl: Element by element(Element.Category.Declaration) {
+        parent(asmDecl)
+
+        +field<Int>("algorithm")
     }
 
-    val moduleReference: Element by element(Element.Category.Types) {
-        parent(assemblyElement)
-        parent(moduleElement)
+    val asmCultureDecl: Element by element(Element.Category.Declaration) {
+        parent(asmDecl)
 
-        +field("filename", type<String>())
+        +field<String>("value")
     }
 
-    val typeReference: Element by sealedElement(Element.Category.Types) {
-        +field("name", type<String>())
-        +field("nestedName", type<String>())
+    val asmPublicKeyDecl: Element by element(Element.Category.Declaration) {
+        parent(asmDecl)
+
+        +field<ByteArray>("value")
     }
 
-    val simpleTypeReference: Element by element(Element.Category.Types) {
-        parent(typeReference)
+    val asmVerDecl: Element by element(Element.Category.Declaration) {
+        parent(asmDecl)
+
+        +field<Int>("major")
+        +field<Int>("minor")
+        +field<Int>("build")
+        +field<Int>("revision")
     }
 
-    val moduleTypeReference: Element by element(Element.Category.Types) {
-        parent(typeReference)
-
-        +field("moduleName", type<String>())
+    val securityDecl: Element by element(Element.Category.Primitive) {
+        parent(asmDecl)
     }
 
-    val assemblyTypeReference: Element by element(Element.Category.Types) {
-        parent(typeReference)
+    val assemblyRefDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
+        parent(manResDecl)
 
-        +field("assemblyName", type<String>())
+        +field("name", dottedName)
+        +listField("decls", asmRefDecl)
     }
 
-    val `class`: Element by element(Element.Category.Declaration) {
-        parent(moduleElement)
-        parent(classElement)
+    val asmRefDecl: Element by element(Element.Category.Primitive) {}
 
-        +field("visibility", type<Visibility>())
-        +field("layout", layoutAttributeType)
-        +field("isInterface", type<Boolean>())
-        +field("isAbstract", type<Boolean>())
-        +field("isSealed", type<Boolean>())
-        +listField("genericParameters", genericParameter, mutability = ListField.Mutability.MutableList)
-        +listField("declarations", classElement, mutability = ListField.Mutability.MutableList)
+    val asmRefHashDecl: Element by element(Element.Category.Declaration) {
+        parent(asmRefDecl)
+
+        +field<ByteArray>("hash")
     }
 
-    val genericParameter: Element by element(Element.Category.Declaration) {
-        +field("isClass", type<Boolean>())
-        +field("isValueType", type<Boolean>())
-        +field("hasDefaultConstructor", type<Boolean>())
-        +field("isCovariant", type<Boolean>())
-        +field("isContravariant", type<Boolean>())
+    val asmRefCultureDecl: Element by element(Element.Category.Declaration) {
+        parent(asmRefDecl)
 
-        +listField("constraints", typeType, mutability = ListField.Mutability.MutableList)
+        +field<String>("value")
     }
 
-    val data: Element by element(Element.Category.Declaration) {
-        parent(assemblyElement)
-        parent(moduleElement)
-        parent(classElement)
+    val asmRefPublicKeyTokenDecl: Element by element(Element.Category.Declaration) {
+        parent(asmRefDecl)
+
+        +field<ByteArray>("value")
     }
 
-    val assembly: Element by element(Element.Category.Declaration) {
-        parent(assemblyElement)
+    val asmRefPublicKeyDecl: Element by element(Element.Category.Declaration) {
+        parent(asmRefDecl)
+
+        +field<ByteArray>("value")
     }
 
-    val assemblyReference: Element by element(Element.Category.Declaration) {
-        parent(assemblyElement)
+    val asmRefVersionDecl: Element by element(Element.Category.Declaration) {
+        parent(asmRefDecl)
 
-        field("name", type<String>())
-        field("alias", type<String>(), nullable = true)
+        +field<Int>("major")
+        +field<Int>("minor")
+        +field<Int>("build")
+        +field<Int>("revision")
     }
 
-    val corflags: Element by element(Element.Category.Declaration) {
-        parent(assemblyElement)
+    val corflagsDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
 
-        +field("value", type<Int>())
+        +field<Int>("value")
     }
 
-    val file: Element by element(Element.Category.Declaration) {
-        parent(assemblyElement)
+    val fileDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
 
-        +field("hasMetadata", type<Boolean>())
-        +field("name", type<String>())
-        +field("hash", type<ByteArray>())
-        +field("entrypoint", type<Boolean>())
+        +field<Boolean>("hasMetadata")
+        +field<Boolean>("hasEntrypoint")
+        +field<ByteArray>("hash")
     }
 
-    val field: Element by element(Element.Category.Declaration) {
-        parent(assemblyElement)
-        parent(moduleElement)
-        parent(classElement)
+    val modeRefDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
+
+        +field("file", fileName)
     }
 
-    val method: Element by element(Element.Category.Declaration) {
-        parent(assemblyElement)
-        parent(moduleElement)
-        parent(classElement)
+    val mresourceDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
+
+        +field<Boolean>("isPrivate")
+        +field("name", dottedName)
+        +listField("decls", manResDecl)
     }
 
-    val customAttribute: Element by element(Element.Category.Declaration) {
-        parent(assemblyElement)
-        parent(moduleElement)
-        parent(classElement)
+    val manResDecl: Element by element(Element.Category.Primitive) {}
+
+    val manResFileDecl: Element by element(Element.Category.Declaration) {
+        parent(manResDecl)
+
+        +field("name", dottedName)
+        +field<Int>("offset")
+    }
+
+    val subsystemDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
+
+        +field<Int>("value")
+    }
+
+    val customDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
+        parent(asmDecl)
+        parent(manResDecl)
+        parent(asmRefDecl)
+    }
+
+    val moduleDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
+
+        +field("file", fileName)
+    }
+
+    val moduleRefDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
+
+        +field("file", fileName)
+    }
+
+    val classDecl: Element by element(Element.Category.Declaration) {
+        parent(decl)
+
+        +listField("attributes", classAttr)
+        +field("name", id)
+    }
+
+    val classAttr: Element by element(Element.Category.Primitive) {}
+
+    val genPar: Element by element(Element.Category.Primitive) {
+        +listField("genParAttribs", genParAttr)
+        +listField("genConstraints", type)
+        +field("id", id)
+    }
+
+    val genParAttr: Element by element(Element.Category.Primitive) {}
+
+    val covariantGenParAttr: Element by element(Element.Category.Primitive) {
+        parent(genParAttr)
+    }
+
+    val contravariantGenParAttr: Element by element(Element.Category.Primitive) {
+        parent(genParAttr)
+    }
+
+    val classGenParAttr: Element by element(Element.Category.Primitive) {
+        parent(genParAttr)
+    }
+
+    val valuetypeGenParAttr: Element by element(Element.Category.Primitive) {
+        parent(genParAttr)
+    }
+
+    val defaultConstructorGenParAttr: Element by element(Element.Category.Primitive) {
+        parent(genParAttr)
+    }
+
+    val typeSpec: Element by element(Element.Category.Types) {}
+
+    val typeReference: Element by element(Element.Category.Types) {
+        parent(typeSpec)
+
+        +field("resolutionScope", resolutionScope, nullable = true)
+        +field("name", dottedName)
+        +field("nested", dottedName, nullable = true)
+    }
+
+    val resolutionScope: Element by element(Element.Category.Primitive) {}
+
+    val moduleResolutionScope: Element by element(Element.Category.Primitive) {
+        parent(resolutionScope)
+
+        +field("module", fileName)
+    }
+
+    val assemblyResolutionScope: Element by element(Element.Category.Primitive) {
+        parent(resolutionScope)
+
+        +field("assembly", dottedName)
+    }
+
+    val methodPointType: Element by element(Element.Category.Types) {
+        parent(type)
+
+        +field("callConv", callConv)
+        +field("returnType", type)
+        +field("parameters", param)
+    }
+
+    val customModifierType by element(Element.Category.Types) {
+        parent(type)
+
+        +field<Boolean>("isRequired")
+        +field("type", type)
+        +field("modifier", typeReference)
+    }
+
+    val classType by element(Element.Category.Types) {
+        parent(type)
+
+        +field("type", typeReference)
+    }
+
+    val valueType by element(Element.Category.Types) {
+        parent(type)
+
+        +field("type", typeReference)
+    }
+
+    val callConv: Element by element(Element.Category.Primitive) {
+        +field<Boolean>("isInstance")
+        +field<Boolean>("isExplicit")
+        +field("kind", callKindType)
+    }
+
+    val param: Element by element(Element.Category.Primitive) {
+        +field<Boolean>("hasInAtt")
+        +field<Boolean>("hasOutAtt")
+        +field<Boolean>("hasOptAtt")
+        +field("type", type)
+        +field("marshalAs", nativeType)
+        +field("name", id, nullable = true)
     }
 }

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.il.generator.Packages.clrDescriptors
 import org.jetbrains.kotlin.il.generator.Packages.tree
-import org.jetbrains.kotlin.il.generator.Packages.types
 
 object Packages {
     const val tree = "org.jetbrains.kotlin.il"
@@ -26,8 +25,10 @@ object Packages {
 
 val elementBaseType = type(tree, "ILElementBase", TypeKind.Class)
 
-val sourceInfoType = type(tree, "SourceInfo", TypeKind.Class)
+val type = type(tree, "ILType", TypeKind.Interface)
 
-val typeType = type(types, "ILType", TypeKind.Interface)
+val nativeType = type(tree, "ILNativeType", TypeKind.Interface)
+
+val callKindType = type(tree, "ILCallKind", TypeKind.Interface)
 
 val layoutAttributeType = type(clrDescriptors, "LayoutAttribute", TypeKind.Class)

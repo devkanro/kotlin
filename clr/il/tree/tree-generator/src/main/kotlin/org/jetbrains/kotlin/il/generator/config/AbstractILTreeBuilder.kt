@@ -9,15 +9,18 @@ import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.TypeRef
 import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
 import org.jetbrains.kotlin.generators.tree.config.AbstractElementConfigurator
+import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.il.generator.model.Element
 import org.jetbrains.kotlin.il.generator.model.Field
 import org.jetbrains.kotlin.il.generator.model.ListField
 import org.jetbrains.kotlin.il.generator.model.SimpleField
 
 abstract class AbstractILTreeBuilder : AbstractElementConfigurator<Element, Field, Element.Category>() {
-    override fun createElement(name: String, propertyName: String, category: Element.Category): Element {
-        return Element(name, propertyName, category)
-    }
+    override fun createElement(
+        name: String,
+        propertyName: String,
+        category: Element.Category,
+    ): Element = Element(name, propertyName, category)
 
     protected fun field(
         name: String,
@@ -25,26 +28,34 @@ abstract class AbstractILTreeBuilder : AbstractElementConfigurator<Element, Fiel
         nullable: Boolean = false,
         mutable: Boolean = true,
         isChild: Boolean = true,
-        initializer: SimpleField.() -> Unit = {}
-    ): SimpleField {
-        return SimpleField(name, type.copy(nullable), mutable, isChild).apply {
+        initializer: SimpleField.() -> Unit = {},
+    ): SimpleField =
+        SimpleField(name, type.copy(nullable), mutable, isChild).apply {
             initializer()
         }
-    }
+
+    protected inline fun <reified T : Any> field(
+        name: String,
+        nullable: Boolean = false,
+        mutable: Boolean = true,
+        isChild: Boolean = true,
+        noinline initializer: SimpleField.() -> Unit = {},
+    ): SimpleField = field(name, type<T>(), nullable, mutable, isChild, initializer)
 
     protected fun listField(
         name: String,
         baseType: TypeRef,
         nullable: Boolean = false,
-        mutability: ListField.Mutability,
+        mutability: ListField.Mutability = ListField.Mutability.MutableList,
         isChild: Boolean = true,
-        initializer: ListField.() -> Unit = {}
+        initializer: ListField.() -> Unit = {},
     ): ListField {
-        val listType = when (mutability) {
-            ListField.Mutability.MutableList -> StandardTypes.mutableList
-            ListField.Mutability.Array -> StandardTypes.array
-            else -> StandardTypes.list
-        }
+        val listType =
+            when (mutability) {
+                ListField.Mutability.MutableList -> StandardTypes.mutableList
+                ListField.Mutability.Array -> StandardTypes.array
+                else -> StandardTypes.list
+            }
         return ListField(
             name = name,
             baseType = baseType,
@@ -57,11 +68,19 @@ abstract class AbstractILTreeBuilder : AbstractElementConfigurator<Element, Fiel
         }
     }
 
+    protected inline fun <reified T : Any> listField(
+        name: String,
+        nullable: Boolean = false,
+        mutability: ListField.Mutability = ListField.Mutability.MutableList,
+        isChild: Boolean = true,
+        noinline initializer: ListField.() -> Unit = {},
+    ): ListField = listField(name, type<T>(), nullable, mutability, isChild, initializer)
+
     protected fun Element.generateBooleanFields(vararg names: String) {
         names.forEach {
             +field(
                 if (it.startsWith("is") || it.startsWith("has")) it else "is${it.replaceFirstChar(Char::uppercaseChar)}",
-                StandardTypes.boolean
+                StandardTypes.boolean,
             )
         }
     }

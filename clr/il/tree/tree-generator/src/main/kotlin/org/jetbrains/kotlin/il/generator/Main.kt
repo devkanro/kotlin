@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.il.generator
 
 import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
 import org.jetbrains.kotlin.il.generator.model.Element
-import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
 const val BASE_PACKAGE = "org.jetbrains.kotlin.il"
@@ -17,8 +16,9 @@ internal const val TREE_GENERATOR_README = "clr/il/tree/tree-generator/ReadMe.md
 typealias Model = org.jetbrains.kotlin.generators.tree.Model<Element>
 
 fun main(args: Array<String>) {
-    val generationPath = args.firstOrNull()?.let { File(it) }
-        ?: File("clr/clr.il/gen").canonicalFile
+    val generationPath =
+        args.firstOrNull()?.let { File(it) }
+            ?: File("clr/il/tree/gen").canonicalFile
 
     val model = ILTree.build()
     TreeGenerator(generationPath, TREE_GENERATOR_README).run {
@@ -26,22 +26,12 @@ fun main(args: Array<String>) {
             model,
             elementBaseType,
             ::ElementPrinter,
-            listOf(
-                elementVisitorType to ::VisitorPrinter,
-                elementVisitorVoidType to ::VisitorVoidPrinter,
-                elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
-                elementTransformerVoidType to ::TransformerVoidPrinter,
-                typeTransformerType to ::TypeTransformerPrinter.bind(model.rootElement),
-                typeTransformerVoidType to ::TypeTransformerVoidPrinter.bind(model.rootElement),
-            ),
+            listOf(),
             ImplementationConfigurator,
             createImplementationPrinter = ::ImplementationPrinter,
             enableBaseTransformerTypeDetection = false,
             addFiles = {
-                add(printSymbolRemapper(generationPath, model, declaredSymbolRemapperType, ::DeclaredSymbolRemapperInterfacePrinter))
-                add(printSymbolRemapper(generationPath, model, referencedSymbolRemapperType, ::ReferencedSymbolRemapperInterfacePrinter))
-                add(printSymbolRemapper(generationPath, model, symbolRemapperType, ::SymbolRemapperInterfacePrinter))
-            }
+            },
         )
     }
 }

@@ -479,7 +479,7 @@ include ":kotlin-annotations-clr",
         ":compiler:config.clr",
         ":compiler:frontend.common.clr",
         ":compiler:fir:clr",
-        ":compiler:cli:cli-clr",
+        ":compiler:cli-clr",
         ":libraries:stdlib:kotlin-stdlib-clr",
         ":clr:il:fir2il",
         ":clr:il:tree",
@@ -494,7 +494,7 @@ project(":compiler:backend.common.clr").projectDir = "$rootDir/clr/clr.backend.c
 project(":compiler:config.clr").projectDir = "$rootDir/clr/clr.config" as File
 project(":compiler:frontend.common.clr").projectDir = "$rootDir/clr/clr.frontend.common" as File
 project(":compiler:fir:clr").projectDir = "$rootDir/clr/clr.fir" as File
-project(":compiler:cli:cli-clr").projectDir = "$rootDir/clr/clr.compiler.cli" as File
+project(":compiler:cli-clr").projectDir = "$rootDir/clr/clr.compiler.cli" as File
 project(":libraries:stdlib:kotlin-stdlib-clr").projectDir = "$rootDir/clr/clr.stdlib" as File
 
 void intellij(String imlPath) {

@@ -56,5 +56,66 @@ object ILBuiltInTypes {
 
     object Void : ILBuiltInType("void")
 
-    object Typedref: ILBuiltInType("typedref")
+    object TypedRef : ILBuiltInType("typedref")
+}
+
+interface ILGenRefType : ILType {
+    val index: Int
+}
+
+data class ILTypeGenRefType(
+    override val index: Int,
+) : ILGenRefType {
+    override fun toString(): String = "!$index"
+}
+
+data class ILMethodGenRefType(
+    override val index: Int,
+) : ILGenRefType {
+    override fun toString(): String = "!!$index"
+}
+
+interface ILPointerType : ILType {
+    val type: ILType
+}
+
+data class ILManagedPointerType(
+    override val type: ILType,
+) : ILPointerType {
+    override fun toString(): String = "$type&"
+}
+
+data class ILUnmanagedPointerType(
+    override val type: ILType,
+) : ILPointerType {
+    override fun toString(): String = "$type*"
+}
+
+data class ILPinnedType(
+    val type: ILType,
+) {
+    override fun toString(): String = "$type pinned"
+}
+
+data class ILGenericType(
+    val type: ILType,
+    val genArgs: Array<ILType>,
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ILGenericType
+
+        if (type != other.type) return false
+        if (!genArgs.contentEquals(other.genArgs)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = type.hashCode()
+        result = 31 * result + genArgs.contentHashCode()
+        return result
+    }
 }
