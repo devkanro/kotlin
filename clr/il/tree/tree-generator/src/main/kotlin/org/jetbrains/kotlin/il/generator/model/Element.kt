@@ -19,6 +19,8 @@ class Element(
     ) {
         Expression("expressions", "expression"),
         Declaration("declarations", "declaration"),
+        Primitive("primitive", "primitive"),
+        Types("types", "primitive"),
         Other("", "element"),
         ;
 
