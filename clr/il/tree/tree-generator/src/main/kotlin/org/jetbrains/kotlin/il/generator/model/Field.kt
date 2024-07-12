@@ -11,7 +11,6 @@ sealed class Field(
     override val name: String,
     override var isMutable: Boolean,
 ) : AbstractField<Field>() {
-
     override var defaultValueInBuilder: String?
         get() = null
         set(_) = error("Builders are not supported")
@@ -35,7 +34,6 @@ class SimpleField(
     mutable: Boolean,
     override val isChild: Boolean,
 ) : Field(name, mutable) {
-
     override fun substituteType(map: TypeParameterSubstitutionMap) {
         typeRef = typeRef.substitute(map) as TypeRefWithNullability
     }
@@ -50,8 +48,8 @@ class ListField(
     override val listType: ClassRef<PositionTypeParameterRef>,
     mutable: Boolean,
     override val isChild: Boolean,
-) : Field(name, mutable), org.jetbrains.kotlin.generators.tree.ListField {
-
+) : Field(name, mutable),
+    org.jetbrains.kotlin.generators.tree.ListField {
     override val typeRef: ClassRef<PositionTypeParameterRef>
         get() = listType.withArgs(baseType).copy(isNullable)
 
@@ -67,7 +65,6 @@ class ListField(
     enum class Mutability {
         Var,
         MutableList,
-        Array
+        Array,
     }
 }
-

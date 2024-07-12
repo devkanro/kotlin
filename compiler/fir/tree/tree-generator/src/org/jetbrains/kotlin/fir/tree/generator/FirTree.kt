@@ -5,23 +5,23 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.annotations
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.declarations
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.typeArguments
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.typeParameters
+import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Other
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Expression
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Declaration
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Reference
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Contracts
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Declaration
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Diagnostics
-import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.TypeRef as TypeRefElement
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Expression
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Other
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Reference
 import org.jetbrains.kotlin.fir.tree.generator.model.fieldSet
 import org.jetbrains.kotlin.fir.tree.generator.util.type
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.TypeRef as TypeRefElement
 
 // Note the style of the DSL to describe FIR elements, which is these things in the following order:
 // 1) config (see properties of Element)
@@ -73,9 +73,13 @@ object FirTree : AbstractFirTreeBuilder() {
     val elementWithResolveState: Element by element(Other) {
         kind = ImplementationKind.AbstractClass
 
-        +field("resolvePhase", resolvePhaseType) { isParameter = true; }
+        +field("resolvePhase", resolvePhaseType) {
+            isParameter = true
+        }
         +field("resolveState", resolveStateType) {
-            isMutable = true; isVolatile = true; isFinal = true;
+            isMutable = true
+            isVolatile = true
+            isFinal = true
             implementationDefaultStrategy = AbstractField.ImplementationDefaultStrategy.Lateinit
             customInitializationCall = "resolvePhase.asResolveState()"
             arbitraryImportables += phaseAsResolveStateExtentionImport
@@ -361,11 +365,12 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val augmentedAssignment: Element by element(Expression) {
-        kDoc = """
-                Represents an augmented assignment statement (e.g. `x += y`) **before** it gets resolved.
-                After resolution, it will be either represented as an assignment (`x = x.plus(y)`) or a call (`x.plusAssign(y)`). 
-                
-                Augmented assignments with an indexed access as receiver are represented as [${indexedAccessAugmentedAssignment.render()}]. 
+        kDoc =
+            """
+            Represents an augmented assignment statement (e.g. `x += y`) **before** it gets resolved.
+            After resolution, it will be either represented as an assignment (`x = x.plus(y)`) or a call (`x.plusAssign(y)`). 
+            
+            Augmented assignments with an indexed access as receiver are represented as [${indexedAccessAugmentedAssignment.render()}]. 
             """.trimIndent()
 
         parent(statement)
@@ -573,9 +578,25 @@ object FirTree : AbstractFirTreeBuilder() {
         +field(visibilityType)
         +field(modalityType, nullable = true)
         generateBooleanFields(
-            "expect", "actual", "override", "operator", "infix", "inline", "tailRec",
-            "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
-            "fromSealedClass", "fromEnumClass", "fun", "hasStableParameterNames",
+            "expect",
+            "actual",
+            "override",
+            "operator",
+            "infix",
+            "inline",
+            "tailRec",
+            "external",
+            "const",
+            "lateInit",
+            "inner",
+            "companion",
+            "data",
+            "suspend",
+            "static",
+            "fromSealedClass",
+            "fromEnumClass",
+            "fun",
+            "hasStableParameterNames",
         )
         +field("defaultVisibility", visibilityType, nullable = false)
         +field("defaultModality", modalityType, nullable = false)
@@ -817,13 +838,14 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val indexedAccessAugmentedAssignment: Element by element(Expression) {
-        kDoc = """
-                    Represents an augmented assignment with an indexed access as the receiver (e.g., `arr[i] += 1`)
-                    **before** it gets resolved.
-                    
-                    After resolution, the call will be desugared into regular function calls,
-                    either of the form `arr.set(i, arr.get(i).plus(1))` or `arr.get(i).plusAssign(1)`.
-                """.trimIndent()
+        kDoc =
+            """
+            Represents an augmented assignment with an indexed access as the receiver (e.g., `arr[i] += 1`)
+            **before** it gets resolved.
+            
+            After resolution, the call will be desugared into regular function calls,
+            either of the form `arr.set(i, arr.get(i).plus(1))` or `arr.get(i).plusAssign(1)`.
+            """.trimIndent()
 
         parent(statement)
 
@@ -900,7 +922,8 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val spreadArgumentExpression: Element by element(Expression) {
-        kDoc = """
+        kDoc =
+            """
                 |### Up to and including body resolution phase
                 |
                 |Represents a spread expression `*foo`. If a spread expression is passed as named argument `foo = *bar`, it will be
@@ -928,7 +951,8 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val namedArgumentExpression: Element by element(Expression) {
-        kDoc = """
+        kDoc =
+            """
                 |Represents a named argument `foo = bar` before and during body resolution phase.
                 |
                 |After body resolution, all [${namedArgumentExpression.render()}]s are removed from the FIR tree and the argument mapping must be
@@ -954,7 +978,8 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("arguments", expression)
         +field("coneElementTypeOrNull", coneKotlinTypeType, nullable = true)
 
-        kDoc = """
+        kDoc =
+            """
                 |[${varargArgumentsExpression.render()}]s are created during body resolution phase for arguments of `vararg` parameters.
                 |
                 |If one or multiple elements are passed to a `vararg` parameter, the will be wrapped with a [${varargArgumentsExpression.render()}]
@@ -1268,17 +1293,19 @@ object FirTree : AbstractFirTreeBuilder() {
     private object FieldSets {
         val typeArguments = fieldSet(listField("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true))
 
-        val declarations = fieldSet(
-            listField(declaration) {
-                useInBaseTransformerDetection = false
-            }
-        )
+        val declarations =
+            fieldSet(
+                listField(declaration) {
+                    useInBaseTransformerDetection = false
+                },
+            )
 
-        val annotations = fieldSet(
-            listField("annotations", annotation, withReplace = true, useMutableOrEmpty = true, withTransform = true) {
-                needTransformInOtherChildren = true
-            }
-        )
+        val annotations =
+            fieldSet(
+                listField("annotations", annotation, withReplace = true, useMutableOrEmpty = true, withTransform = true) {
+                    needTransformInOtherChildren = true
+                },
+            )
 
         val typeParameters = fieldSet(listField("typeParameters", typeParameter))
 

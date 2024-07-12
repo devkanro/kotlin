@@ -7,18 +7,22 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
-class Element(name: String, override val propertyName: String, kind: Kind) : AbstractElement<Element, Field, Implementation>(name) {
+class Element(
+    name: String,
+    override val propertyName: String,
+    kind: Kind,
+) : AbstractElement<Element, Field, Implementation>(name) {
     companion object {
-        private val allowedKinds = setOf(
-            ImplementationKind.Interface,
-            ImplementationKind.SealedInterface,
-            ImplementationKind.AbstractClass,
-            ImplementationKind.SealedClass
-        )
+        private val allowedKinds =
+            setOf(
+                ImplementationKind.Interface,
+                ImplementationKind.SealedInterface,
+                ImplementationKind.AbstractClass,
+                ImplementationKind.SealedClass,
+            )
     }
 
     override val namePrefix: String
@@ -57,21 +61,25 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     override val visitorParameterName: String
         get() = safeDecapitalizedName
 
-    val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || elementParents.any { it.element.needTransformOtherChildren }
+    val needTransformOtherChildren: Boolean get() =
+        _needTransformOtherChildren ||
+            elementParents.any { it.element.needTransformOtherChildren }
 
     operator fun FieldSet.unaryPlus() {
         val fields = fieldDefinitions.map { it.copy() }
         this@Element.fields.addAll(fields)
     }
 
-    enum class Kind(val packageName: String) {
+    enum class Kind(
+        val packageName: String,
+    ) {
         Expression("expressions"),
         Declaration("declarations"),
         Reference("references"),
         TypeRef("types"),
         Contracts("contracts"),
         Diagnostics("diagnostics"),
-        Other("")
+        Other(""),
     }
 }
 

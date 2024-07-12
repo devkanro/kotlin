@@ -12,36 +12,40 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 abstract class AbstractElementConfigurator<Element, Field, Category>
-        where Element : AbstractElement<Element, Field, *>,
-              Field : AbstractField<Field> {
-
+    where Element : AbstractElement<Element, Field, *>,
+          Field : AbstractField<Field> {
     inner class ElementDelegate(
         private val category: Category,
         private val name: String?,
         private val isSealed: Boolean,
     ) : ReadOnlyProperty<AbstractElementConfigurator<Element, Field, Category>, Element>,
         PropertyDelegateProvider<AbstractElementConfigurator<Element, Field, Category>, ElementDelegate> {
-
         var element: Element? = null
             private set
 
-        override fun getValue(thisRef: AbstractElementConfigurator<Element, Field, Category>, property: KProperty<*>): Element {
-            return element!!
-        }
+        override fun getValue(
+            thisRef: AbstractElementConfigurator<Element, Field, Category>,
+            property: KProperty<*>,
+        ): Element = element!!
 
         override fun provideDelegate(
             thisRef: AbstractElementConfigurator<Element, Field, Category>,
             property: KProperty<*>,
         ): ElementDelegate {
             val path = thisRef.javaClass.name + "." + property.name
-            element = createElement(name ?: property.name.replaceFirstChar(Char::uppercaseChar), path, category).also {
-                it.isSealed = isSealed
-            }
+            element =
+                createElement(name ?: property.name.replaceFirstChar(Char::uppercaseChar), path, category).also {
+                    it.isSealed = isSealed
+                }
             return this
         }
     }
 
-    protected abstract fun createElement(name: String, propertyName: String, category: Category): Element
+    protected abstract fun createElement(
+        name: String,
+        propertyName: String,
+        category: Category,
+    ): Element
 
     private val configurationCallbacks = mutableListOf<() -> Element>()
 
@@ -70,11 +74,17 @@ abstract class AbstractElementConfigurator<Element, Field, Category>
         return del
     }
 
-    fun element(category: Category, name: String? = null, initializer: Element.() -> Unit = {}): ElementDelegate =
-        createElement(category, name, isSealed = false, initializer)
+    fun element(
+        category: Category,
+        name: String? = null,
+        initializer: Element.() -> Unit = {},
+    ): ElementDelegate = createElement(category, name, isSealed = false, initializer)
 
-    fun sealedElement(category: Category, name: String? = null, initializer: Element.() -> Unit = {}): ElementDelegate =
-        createElement(category, name, isSealed = true, initializer)
+    fun sealedElement(
+        category: Category,
+        name: String? = null,
+        initializer: Element.() -> Unit = {},
+    ): ElementDelegate = createElement(category, name, isSealed = true, initializer)
 
     protected fun Element.parent(type: ClassRef<*>) {
         otherParents.add(type)
@@ -84,9 +94,11 @@ abstract class AbstractElementConfigurator<Element, Field, Category>
         addParent(type.toRef())
     }
 
-    protected fun param(name: String, vararg bounds: TypeRef, variance: Variance = Variance.INVARIANT): TypeVariable {
-        return TypeVariable(name, bounds.toList(), variance)
-    }
+    protected fun param(
+        name: String,
+        vararg bounds: TypeRef,
+        variance: Variance = Variance.INVARIANT,
+    ): TypeVariable = TypeVariable(name, bounds.toList(), variance)
 
     companion object {
         val int = StandardTypes.int
@@ -100,15 +112,13 @@ fun <Element, Field> AbstractElementConfigurator<Element, Field, Nothing?>.eleme
     initializer: Element.() -> Unit = {},
 ): AbstractElementConfigurator<Element, Field, Nothing?>.ElementDelegate
         where Element : AbstractElement<Element, Field, *>,
-              Field : AbstractField<Field> {
-    return element(null, name, initializer)
-}
+              Field : AbstractField<Field> =
+    element(null, name, initializer)
 
 fun <Element, Field> AbstractElementConfigurator<Element, Field, Nothing?>.sealedElement(
     name: String? = null,
     initializer: Element.() -> Unit = {},
 ): AbstractElementConfigurator<Element, Field, Nothing?>.ElementDelegate
         where Element : AbstractElement<Element, Field, *>,
-              Field : AbstractField<Field> {
-    return sealedElement(null, name, initializer)
-}
+              Field : AbstractField<Field> =
+    sealedElement(null, name, initializer)

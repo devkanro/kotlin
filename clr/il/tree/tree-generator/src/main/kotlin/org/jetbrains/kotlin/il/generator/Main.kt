@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.il.generator
 
 import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
 import org.jetbrains.kotlin.il.generator.model.Element
+import org.jetbrains.kotlin.il.generator.print.ElementPrinter
+import org.jetbrains.kotlin.il.generator.print.ImplementationPrinter
 import java.io.File
 
 const val BASE_PACKAGE = "org.jetbrains.kotlin.il"

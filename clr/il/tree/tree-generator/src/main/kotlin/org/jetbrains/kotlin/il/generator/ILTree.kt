@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.il.generator
 
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.il.generator.config.AbstractILTreeBuilder
 import org.jetbrains.kotlin.il.generator.model.Element
@@ -187,6 +188,7 @@ object ILTree : AbstractILTreeBuilder() {
         parent(asmDecl)
         parent(manResDecl)
         parent(asmRefDecl)
+        parent(classMember)
     }
 
     val moduleDecl: Element by element(Element.Category.Declaration) {
@@ -203,12 +205,115 @@ object ILTree : AbstractILTreeBuilder() {
 
     val classDecl: Element by element(Element.Category.Declaration) {
         parent(decl)
+        parent(classMember)
 
         +listField("attributes", classAttr)
         +field("name", id)
+        +listField("genPars", genPar)
+        +field("extends", typeSpec)
+        +listField("implements", typeSpec)
     }
 
-    val classAttr: Element by element(Element.Category.Primitive) {}
+    val classAttr: Element by element(Element.Category.Primitive) {
+        kind = ImplementationKind.Interface
+    }
+
+    val classVisibilityAttr: Element by element(Element.Category.Primitive) {
+        parent(classAttr)
+    }
+
+    val classLayoutAttr: Element by element(Element.Category.Primitive) {
+        parent(classAttr)
+    }
+
+    val classSemanticsAttr: Element by element(Element.Category.Primitive) {
+        parent(classAttr)
+    }
+
+    val classInheritanceAttr: Element by element(Element.Category.Primitive) {
+        parent(classAttr)
+    }
+
+    val classInteroperationAttr: Element by element(Element.Category.Primitive) {
+        parent(classAttr)
+    }
+
+    val classBeforeFieldInitAttr: Element by element(Element.Category.Primitive) {
+        parent(classAttr)
+    }
+
+    val classMember: Element by element(Element.Category.Primitive) {
+        kind = ImplementationKind.Interface
+    }
+
+    val dataDecl: Element by element(Element.Category.Declaration) {
+        +field("label", id)
+        +listField("items", dataItem)
+    }
+
+    val dataItem: Element by element(Element.Category.Declaration) {
+        kind = ImplementationKind.Interface
+    }
+
+    val labelAddressDataItem: Element by element(Element.Category.Primitive) {
+        parent(dataItem)
+
+        +field("label", id)
+    }
+
+    val byteArrayDataItem: Element by element(Element.Category.Primitive) {
+        parent(dataItem)
+
+        +field<ByteArray>("value")
+    }
+
+    val stringDataItem: Element by element(Element.Category.Primitive) {
+        parent(dataItem)
+
+        +field<String>("value")
+    }
+
+    val float32DataItem: Element by element(Element.Category.Primitive) {
+        parent(dataItem)
+
+        +field<Float>("value")
+        +field<Int>("replications")
+    }
+
+    val float64DataItem: Element by element(Element.Category.Primitive) {
+        parent(dataItem)
+
+        +field<Double>("value")
+        +field<Int>("replications")
+    }
+
+    val int8DataItem: Element by element(Element.Category.Primitive) {
+        parent(dataItem)
+
+        +field<Byte>("value")
+        +field<Int>("replications")
+    }
+
+    val int16DataItem: Element by element(Element.Category.Primitive) {
+        parent(dataItem)
+
+        +field<Short>("value")
+        +field<Int>("replications")
+    }
+
+    val int32DataItem: Element by element(Element.Category.Primitive) {
+        parent(dataItem)
+
+        +field<Int>("value")
+        +field<Int>("replications")
+    }
+
+    val int64DataItem: Element by element(Element.Category.Primitive) {
+        parent(dataItem)
+
+        +field<Long>("value")
+        +field<Int>("replications")
+    }
 
     val genPar: Element by element(Element.Category.Primitive) {
         +listField("genParAttribs", genParAttr)
@@ -238,7 +343,9 @@ object ILTree : AbstractILTreeBuilder() {
         parent(genParAttr)
     }
 
-    val typeSpec: Element by element(Element.Category.Types) {}
+    val typeSpec: Element by element(Element.Category.Types) {
+        kind = ImplementationKind.Interface
+    }
 
     val typeReference: Element by element(Element.Category.Types) {
         parent(typeSpec)

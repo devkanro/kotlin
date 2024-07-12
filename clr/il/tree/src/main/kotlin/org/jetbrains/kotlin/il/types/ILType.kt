@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.il.types
 
-interface ILType {
+interface ILType : ILTypeSpec {
     override fun toString(): String
 }
 

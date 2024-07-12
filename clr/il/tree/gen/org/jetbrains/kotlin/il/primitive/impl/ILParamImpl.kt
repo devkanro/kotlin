@@ -1,0 +1,26 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+// This file was generated automatically. See clr/il/tree/tree-generator/ReadMe.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode")
+
+package org.jetbrains.kotlin.il.primitive.impl
+
+import org.jetbrains.kotlin.il.ILImplementationDetail
+import org.jetbrains.kotlin.il.primitive.ILId
+import org.jetbrains.kotlin.il.primitive.ILParam
+import org.jetbrains.kotlin.il.types.ILNativeType
+import org.jetbrains.kotlin.il.types.ILType
+
+class ILParamImpl @ILImplementationDetail constructor(
+    override var hasInAtt: Boolean,
+    override var hasOutAtt: Boolean,
+    override var hasOptAtt: Boolean,
+    override var type: ILType,
+    override var marshalAs: ILNativeType,
+    override var name: ILId?,
+) : ILParam()
