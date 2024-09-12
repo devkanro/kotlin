@@ -736,105 +736,29 @@ object ILTree : AbstractILTreeBuilder() {
         +field("init", fieldInitDecl, nullable = true)
     }
 
-    val methodScope: Element by element((Element.Category.Primitive)) {
+    val methodScope: Element by element(Element.Category.Primitive) {
         parent(methodBodyItem)
 
         +listField("items", methodBodyItem)
     }
 
+    val opCode: Element by element(Element.Category.Instruction) {
+        kind = ImplementationKind.SealedInterface
+
+        +field<String>("label", mutable = false)
+        +field("input", opCodeInputType, mutable = false)
+        +field("output", opCodeOutputType, mutable = false)
+        +field("param", opCodeInputParam, mutable = false)
+        +field("type", opCodeType, mutable = false)
+        +field<UShort>("code", mutable = false)
+        +field("controlFlow", opCodeControlFlow, mutable = false)
+    }
+
     val instr: Element by element(Element.Category.Instruction) {
         kind = ImplementationKind.Interface
 
-        +field("op", opCodeType)
+        +field("opCode", opCode)
     }
 
-    val instrBrTarget: Element by element(Element.Category.Instruction) {
-        parent(instr)
 
-        kind = ImplementationKind.Interface
-    }
-
-    val instrField: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrI: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrI8: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrMethod: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrNone: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrPhi: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrR: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrRva: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrSig: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrString: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrSwitch: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrTok: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrType: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
-
-    val instrVar: Element by element(Element.Category.Instruction) {
-        parent(instr)
-
-        kind = ImplementationKind.Interface
-    }
 }

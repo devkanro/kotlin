@@ -18,7 +18,6 @@ dependencies {
     implementation(project(":core:deserialization.common.jvm"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }
 
 

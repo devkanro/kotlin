@@ -50,7 +50,7 @@ val propertyKindType = type(primitive, "ILEventPropertyKind", TypeKind.Interface
 
 val methodImplAttrKind = type(primitive, "ILMethodImplAttrKind", TypeKind.Interface)
 
-val opCodeType = type(instructions, "ILOpCode", TypeKind.Interface)
+val opCodeType = type(instructions, "ILOpCodeType", TypeKind.Interface)
 
 val opCodeInputType = type(instructions, "ILOpCodeInput", TypeKind.Interface)
 
@@ -58,7 +58,7 @@ val opCodeOutputType = type(instructions, "ILOpCodeOutput", TypeKind.Interface)
 
 val opCodeInputParam = type(instructions, "ILOpCodeParam", TypeKind.Interface)
 
-val opCodeInputParam = type(instructions, "ILOpCodeParam", TypeKind.Interface)
+val opCodeControlFlow = type(instructions, "ILOpCodeControlFlow", TypeKind.Interface)
 
 val implementationDetailAnnotationType = type(tree, "ILImplementationDetail", TypeKind.Class)
 

@@ -15,4 +15,10 @@ abstract class AbstractILTreeImplementationConfigurator : AbstractImplementation
         element: Element,
         name: String?,
     ) = Implementation(element, name)
+
+    fun createImplementation(
+        element: Element,
+        name: String?,
+        delegate: Implementation?,
+    ) = Implementation(element, name, delegate)
 }

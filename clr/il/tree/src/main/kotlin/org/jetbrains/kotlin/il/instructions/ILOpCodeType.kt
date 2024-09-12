@@ -10,4 +10,5 @@ enum class ILOpCodeType {
     Macro,
     ObjModel,
     Internal,
+    Prefix
 }
