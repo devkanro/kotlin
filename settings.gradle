@@ -487,6 +487,34 @@ include ":native:swift:sir",
         ":native:swift:swift-export-embeddable",
         ":generators:sir-tests-generator"
 
+// Kotlin on CLR
+include ":kotlin-annotations-clr",
+        ":core:descriptors.clr",
+        ":core:compiler.common.clr",
+        ":core:deserialization.common.clr",
+        ":core:metadata.clr",
+        ":compiler:backend.common.clr",
+        ":compiler:config.clr",
+        ":compiler:frontend.common.clr",
+        ":compiler:fir:clr",
+        ":compiler:cli-clr",
+        ":libraries:stdlib:kotlin-stdlib-clr",
+        ":clr:il:fir2il",
+        ":clr:il:tree",
+        ":clr:il:tree:tree-generator"
+
+project(":kotlin-annotations-clr").projectDir = "$rootDir/clr/clr.annotations" as File
+project(":core:descriptors.clr").projectDir = "$rootDir/clr/clr.descriptors" as File
+project(":core:compiler.common.clr").projectDir = "$rootDir/clr/clr.compiler.common" as File
+project(":core:deserialization.common.clr").projectDir = "$rootDir/clr/clr.deserialization.common" as File
+project(":core:metadata.clr").projectDir = "$rootDir/clr/clr.metadata" as File
+project(":compiler:backend.common.clr").projectDir = "$rootDir/clr/clr.backend.common" as File
+project(":compiler:config.clr").projectDir = "$rootDir/clr/clr.config" as File
+project(":compiler:frontend.common.clr").projectDir = "$rootDir/clr/clr.frontend.common" as File
+project(":compiler:fir:clr").projectDir = "$rootDir/clr/clr.fir" as File
+project(":compiler:cli-clr").projectDir = "$rootDir/clr/clr.compiler.cli" as File
+project(":libraries:stdlib:kotlin-stdlib-clr").projectDir = "$rootDir/clr/clr.stdlib" as File
+
 void intellij(String imlPath) {
     File imlFile = new File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/plugins/kotlin/${imlPath}")

@@ -1,0 +1,29 @@
+description = 'Kotlin annotations for CLR'
+
+apply plugin: 'kotlin'
+
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
+
+RepoArtifacts.publish(project)
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+}
+
+dependencies {
+    compileOnly RepoDependencies.kotlinBuiltins(project)
+}
+
+RepoArtifacts.sourcesJar(project)
+RepoArtifacts.javadocJar(project)
+
+compileKotlin {
+    compilerOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+    ]
+    compilerOptions.moduleName = project.name
+}
