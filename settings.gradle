@@ -717,6 +717,13 @@ if (!buildProperties.inJpsBuildIdeaSync) {
 }
 include ":compiler:android-tests"
 
+// CLR support modules
+include ":compiler:ir.backend.clr",
+        ":compiler:ir.serialization.clr"
+
+project(":compiler:ir.backend.clr").projectDir = "$rootDir/clr/ir/backend.clr" as File
+project(":compiler:ir.serialization.clr").projectDir = "$rootDir/clr/ir/serialization.clr" as File
+
 rootProject.name = "kotlin"
 
 project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-runtime" as File
