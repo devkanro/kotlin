@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.ir.backend.clr
 
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import java.util.concurrent.ConcurrentHashMap
 
@@ -29,10 +27,10 @@ class ClrInnerClassesSupport(
             assert(innerClass.isInner) { "Class is not inner: ${innerClass.dump()}" }
             irFactory
                 .buildField {
-                    name = Name.identifier("this$0")
+                    name = Name.identifier("<OuterThis>")
                     type = innerClass.parentAsClass.defaultType
                     origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
-                    visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                    visibility = DescriptorVisibilities.PRIVATE
                     isFinal = true
                 }.apply {
                     parent = innerClass
@@ -72,8 +70,8 @@ class ClrInnerClassesSupport(
 
                 val outerThisValueParameter =
                     buildValueParameter(this) {
-                        origin = JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS
-                        name = Name.identifier(AsmUtil.CAPTURED_THIS_FIELD)
+                        origin = ClrLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS
+                        name = Name.identifier("outerThis")
                         type = oldConstructor.parentAsClass.parentAsClass.defaultType
                     }
                 valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this) }

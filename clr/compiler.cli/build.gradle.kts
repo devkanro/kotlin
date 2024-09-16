@@ -13,13 +13,22 @@ dependencies {
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.serialization.clr"))
     api(project(":compiler:ir.tree"))
-    //api(project(":compiler:backend.clr"))
+    // api(project(":compiler:backend.clr"))
 
     compileOnly(intellijCore())
+
+    testImplementation(libs.junit4)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.platform.launcher)
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
+
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-common-new"))
 }
 
-sourceSets {
-    "main" {
-        projectDefault()
-    }
+task<Test> {
+    useJUnitPlatform()
 }

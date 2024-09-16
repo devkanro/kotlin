@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.clr
 
-class ClrCachedDeclarations(
-    private val context: ClrBackendContext
-) {
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+
+object ClrLoweredDeclarationOrigin {
+    val FIELD_FOR_OUTER_THIS by IrDeclarationOriginImpl
 }
