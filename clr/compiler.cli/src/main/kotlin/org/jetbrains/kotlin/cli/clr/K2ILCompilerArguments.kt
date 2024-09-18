@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.cli.clr
 
 import org.jetbrains.kotlin.cli.common.arguments.Argument
-import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 
-class K2ILCompilerArguments : CommonKlibBasedCompilerArguments() {
+class K2ILCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-target-framework",
         valueDescription = "<version>",
@@ -22,10 +22,54 @@ class K2ILCompilerArguments : CommonKlibBasedCompilerArguments() {
 
     @Argument(
         value = "-assembly-name",
-        valueDescription = "<string>",
+        valueDescription = "<name>",
         description = "The result assembly name",
     )
     var assemblyName: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-target",
+        valueDescription = "<target>",
+        description = "Specify the type of the output assembly (library, exe, module, winexe, winmdobj).",
+    )
+    var target: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-platform-target",
+        valueDescription = "<target>",
+        description = "Specifies which version of the CLR can run the assembly(anycpu, anycpu32bitpreferred, ARM, ARM64, x64, x86).",
+    )
+    var platformTarget: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-il-output",
+        valueDescription = "<path>",
+        description = "Specifies the transformed IL code output.",
+    )
+    var ilOutput: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-references",
+        valueDescription = "<path>",
+        description = "Reference metadata from the specified assembly file or files.",
+    )
+    var references: Array<String>? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value

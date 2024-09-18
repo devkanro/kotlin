@@ -721,10 +721,12 @@ include ":compiler:android-tests"
 include ":core:compiler.common.clr",
         ":compiler:ir.backend.clr",
         ":compiler:ir.serialization.clr",
-        ":compiler:cli-clr"
+        ":compiler:cli-clr",
+        ":compiler:config.clr"
 
 project(':core:compiler.common.clr').projectDir = "$rootDir/clr/compiler.common.clr" as File
 project(':compiler:cli-clr').projectDir = "$rootDir/clr/compiler.cli" as File
+project(':compiler:config.clr').projectDir = "$rootDir/clr/compiler.config" as File
 project(":compiler:ir.backend.clr").projectDir = "$rootDir/clr/ir/backend.clr" as File
 project(":compiler:ir.serialization.clr").projectDir = "$rootDir/clr/ir/serialization.clr" as File
 

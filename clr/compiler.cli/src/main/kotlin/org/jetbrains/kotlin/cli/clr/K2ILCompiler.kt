@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.cli.clr
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.clr.config.addClrAssemblyRoot
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.getModuleNameForSource
+import org.jetbrains.kotlin.fir.FirModuleDataImpl
+import org.jetbrains.kotlin.fir.session.FirClrSessionFactory
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -72,28 +72,17 @@ class K2ILCompiler : CLICompiler<K2ILCompilerArguments>() {
 
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
-        val hmppCliModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
 
         for (arg in arguments.freeArgs) {
-            configuration.addKotlinSourceRoot(arg, commonSources.contains(arg), hmppCliModuleStructure?.getModuleNameForSource(arg))
+            configuration.addKotlinSourceRoot(arg, commonSources.contains(arg))
         }
 
-        val environmentForClr =
-            KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
-        val projectJs = environmentForClr.project
-        val configurationJs = environmentForClr.configuration
-        val sourcesFiles = environmentForClr.getSourceFiles()
-
-        if (sourcesFiles.isEmpty() && (!incrementalCompilationIsEnabledForJs(arguments))) {
-            messageCollector.report(ERROR, "No source files", null)
-            return COMPILATION_ERROR
+        for (reference in arguments.references ?: arrayOf()) {
+            configuration.addClrAssemblyRoot(reference)
         }
 
-        performanceManager?.notifyCompilerInitialized(
-            sourcesFiles.size, environmentForClr.countLinesOfCode(sourcesFiles), "test"
-        )
-
-        ModuleBuilder()
+        FirModuleDataImpl
+        FirClrSessionFactory.createModuleBaseSession()
 
         return OK
     }
@@ -105,4 +94,3 @@ class K2ILCompiler : CLICompiler<K2ILCompilerArguments>() {
     ) {
     }
 }
-
